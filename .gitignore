@@ -1,9 +1,19 @@
-.vscode/
 .idea/
+out/
 *.iml
 *.ipr
 *.iws
-build/
+
 .gradle/
-config.properties
-*.log*
+build/
+
+gradle-app.setting
+
+!gradle-wrapper.jar
+
+.gradletasknamecache
+
+# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+# gradle/wrapper/gradle-wrapper.properties
+
+config.yml
