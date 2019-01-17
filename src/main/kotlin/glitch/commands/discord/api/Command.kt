@@ -37,11 +37,7 @@ abstract class Command(
     ) {
         ADMIN("Administration", "You must have a administrative privileges",
                 Predicate {
-                    when {
-                        it.isOwner -> true
-                        it.guild != null -> it.member!!.isOwner || it.member.hasPermission(Permission.ADMINISTRATOR)
-                        else -> false
-                    }
+                    it.isOwner || (if (it.guild != null) it.member!!.isOwner || it.member.hasPermission(Permission.ADMINISTRATOR) else false)
                 }),
         CORE("Core"),
         SOCIAL("Social"),
