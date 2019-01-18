@@ -34,7 +34,7 @@ class Commander(
 
     @SubscribeEvent
     fun onMessage(event: MessageReceivedEvent) {
-        val channels = arrayOf(488288036661231641L, 495155075858169857L)
+        val channels = arrayOf(488288036661231641L, 495155075858169857L, 491658576574808077L, 325552936203714562L)
         val messageContent = event.message.contentDisplay
 
         if (messageContent.matches(Regex("^$defaultPrefix(.+)$")) && !event.author.isBot) {
@@ -54,8 +54,6 @@ class Commander(
                         it.invoke(commandEvent)
                     }
                 }
-            } else {
-                event.channel.sendMessage("I'm works only on ${event.guild.getTextChannelById(488288036661231641L).asMention}").queue()
             }
         } else {
             listener.onOrdinalMessage(event)
