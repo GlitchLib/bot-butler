@@ -37,7 +37,7 @@ class Commander(
         val channels = arrayOf(488288036661231641L, 495155075858169857L, 491658576574808077L, 325552936203714562L)
         val messageContent = event.message.contentDisplay
 
-        if (messageContent.matches(Regex("^$defaultPrefix(.+)$")) && !event.author.isBot) {
+        if (messageContent.startsWith(defaultPrefix) && !event.author.isBot) {
             if (channels.contains(event.channel.idLong)) {
                 val command = messageContent.substring(defaultPrefix.length, if (messageContent.indexOf(' ') > 0) messageContent.indexOf(' ') else messageContent.length)
                 var args = messageContent.substring(defaultPrefix.length + command.length).trim().split(' ')
