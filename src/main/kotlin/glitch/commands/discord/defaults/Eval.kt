@@ -5,6 +5,7 @@ import glitch.commands.discord.api.CommandEvent
 import glitch.core.utils.Colors
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.ChannelType
+import java.lang.System
 import java.time.Instant
 import javax.script.ScriptContext
 import javax.script.ScriptEngineManager
@@ -14,6 +15,11 @@ class Eval : Command("eval", arrayOf(), "Evaluate your request", Category.UTILS)
     private val engine = ScriptEngineManager().getEngineByName("kotlin")
 
     init {
+        // omitting warning native filesystem for windows
+        if (System.getProperty("os.name").startsWith("win", true)) {
+            System.setProperty("idea.io.use.fallback", "true")
+        }
+
         try {
             engine.eval("""
             import glitch.*
