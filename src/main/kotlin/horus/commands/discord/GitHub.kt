@@ -2,7 +2,6 @@ package horus.commands.discord
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import discord4j.core.`object`.entity.Message
 import horus.commands.discord.api.DiscordCategory
 import horus.commands.discord.api.DiscordCommand
 import horus.commands.discord.api.DiscordCommandEvent
@@ -11,14 +10,9 @@ import horus.core.utils.Timestamps
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.http.ContentType
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.reactor.asMono
-import kotlinx.coroutines.runBlocking
 import java.time.Instant
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information about project.", DiscordCategory.INFO) {
     private val REPO = "https://api.github.com/repos/"
@@ -26,7 +20,7 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
     private val ORGS = "https://api.github.com/orgs/"
 
     override fun run(event: DiscordCommandEvent) {
-        val git = formatArgs(if (event.args.isNotEmpty())event.args[0] else event.api.horus.configuration.github.project)
+        val git = formatArgs(if (event.args.isNotEmpty()) event.args[0] else event.api.horus.configuration.github.project)
 
         val httpClient = event.api.horus.client
 
@@ -55,12 +49,13 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
                 it.setColor(Colors.PRIMARY)
                 it.setTitle("`${event.api.defaultPrefix}${this@GitHub.name} $suffix`")
                 it.setDescription(this@GitHub.description!!)
-                it.addField("Aliases", this@GitHub.alias.joinToString("\n") {"`${event.api.defaultPrefix + it} $suffix`"}, false)
+                it.addField("Aliases", this@GitHub.alias.joinToString("\n") { "`${event.api.defaultPrefix + it} $suffix`" }, false)
                 it.addField("Category", this@GitHub.category.value, false)
                 it.setTimestamp(Instant.now())
             }
         }.subscribe()
     }
+
     private fun doUser(event: DiscordCommandEvent, response: GitUser) {
         event.replay {
             setEmbed {
@@ -80,6 +75,7 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
             }
         }.subscribe()
     }
+
     private fun doOrg(event: DiscordCommandEvent, response: GitOrg) {
         event.replay {
             setEmbed {
@@ -94,6 +90,7 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
             }
         }.subscribe()
     }
+
     private fun doRepo(event: DiscordCommandEvent, response: GitRepository) {
         event.replay {
             setEmbed {
@@ -134,6 +131,7 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
             val followers: Int,
             val following: Int
     )
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class GitOrg(
             val blog: String?,
@@ -153,6 +151,7 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
             val publicGists: Int,
             val publicRepos: Int
     )
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class GitRepository(
             val createdAt: Instant,
@@ -186,6 +185,7 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
                 val login: String,
                 val type: String
         )
+
         @JsonIgnoreProperties(ignoreUnknown = true)
         data class License(
                 val id: Long,
@@ -194,6 +194,7 @@ class GitHub : DiscordCommand("github", arrayOf("git"), "Getting a information a
                 val spdxId: String
         )
     }
+
     data class Git(
             val user: String,
             val repo: String?,
