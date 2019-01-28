@@ -1,9 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.gorylenko.GitProperties
 import com.gorylenko.GitPropertiesPluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 plugins {
     kotlin("jvm") version "1.3.11"
@@ -13,65 +12,76 @@ plugins {
     application
 }
 
-application.mainClassName = "glitch.BotButler"
+application.mainClassName = "horus.MainKt"
 
-group = "io.glitchlib"
+group = "io.horusproject"
 version = "0.1.0"
-description = "Glitch Bot Butler"
+
 
 repositories {
     jcenter()
-//    mavenLocal()
+    mavenLocal()
     maven("https://jitpack.io")
-    maven("https://dl.bintray.com/s1m0nw1/KtsRunner")
+    maven("https://kotlin.bintray.com/kotlinx/")
     maven("https://dl.bintray.com/stachu540/GlitchLib/")
     maven("https://dl.bintray.com/stachu540/Java/")
-    maven("https://kotlin.bintray.com/kotlinx/")
 }
 
-dependencies{
+dependencies {
     compile("ch.qos.logback:logback-classic:1.2.3")
 
     compile(kotlin("stdlib-jdk8"))
     compile(kotlin("reflect"))
 
-    compile("de.swirtz:ktsRunner:0.0.7")
-
     // Config
-    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8")
-    compile("com.fasterxml.jackson.core:jackson-databind:2.9.8")
-    compile("com.fasterxml.jackson.core:jackson-annotations:2.9.8")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
+    compile(enforcedPlatform("com.fasterxml.jackson:jackson-bom:2.9.8"))
+    compile("com.fasterxml.jackson.core:jackson-databind")
+    compile("com.fasterxml.jackson.core:jackson-annotations")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+
+    // Ktor
+    compile("io.ktor:ktor-server-netty:1.1.2")
+    compile("io.ktor:ktor-client-okhttp:1.1.2")
+    compile("io.ktor:ktor-html-builder:1.1.2")
+    compile("io.ktor:ktor-client-core:1.1.2")
+    compile("io.ktor:ktor-client-json-jvm:1.1.2")
+    compile("io.ktor:ktor-client-jackson:1.1.2")
+    compile("io.ktor:ktor-jackson:1.1.2")
+    compile("io.ktor:ktor-webjars:1.1.2")
+
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.1.1")
 
     // HTTP
     compile("com.squareup.okhttp3:okhttp:3.12.1")
-    compile("com.squareup.okhttp3:okcurl:3.12.1")
+    compile("com.squareup.okhttp3:logging-interceptor:3.12.1")
 
-    compile("io.ktor:ktor-client-core:1.1.1")
-    compile("io.ktor:ktor-client-okhttp:1.1.1")
-    compile("io.ktor:ktor-client-json-jvm:1.1.1")
-    compile("io.ktor:ktor-client-jackson:1.1.1")
+    // Discord
+    compile(enforcedPlatform("com.discord4j:bom:3.0.0.M1"))
+    compile("com.discord4j:discord4j-core")
+    compile("com.discord4j:stores-api")
 
-    compile(enforcedPlatform("io.glitchlib:glitch-BOM:0.4.0"))
-    compile("io.glitchlib:glitch-core")
-    compile("io.glitchlib:glitch-pubsub")
-    compile("io.glitchlib:glitch-kraken")
-    compile("io.glitchlib:glitch-helix")
+    // Twitch
+    // TODO: remove bugs - https://discordapp.com/channels/488285226452385792/488287498020323339/538438219864473620
+//    compile(enforcedPlatform("io.glitchlib:glitch-BOM:0.4.0"))
+//    compile("io.glitchlib:glitch-core")
+//    compile("io.glitchlib:glitch-kraken")
+//    compile("io.glitchlib:glitch-helix")
+//    compile("io.glitchlib:glitch-pubsub")
+//    compile("io.glitchlib:glitch-chat")
 
-    compile("net.dv8tion:JDA:3.8.1_454")
-
-    compile("com.github.ajalt:clikt:1.6.0")
+    compile("com.xenomachina:kotlin-argparser:2.0.7")
 }
 
 val gitProperties: GitPropertiesPluginExtension by extensions
 
 gitProperties.apply {
     keys = listOf(
-        "git.branch",
-        "git.commit.id",
-        "git.commit.id.abbrev",
-        "git.commit.id.describe"
+            "git.branch",
+            "git.commit.id",
+            "git.commit.id.abbrev",
+            "git.commit.id.describe"
     )
     dateFormatTimeZone = "GMT"
     customProperty("application.name", project.name)
@@ -97,7 +107,10 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+        }
     }
 
     withType<Wrapper> {
